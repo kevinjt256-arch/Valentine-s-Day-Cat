@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Cat 💖</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff5fa2, #ffc3da);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Poppins", sans-serif;
+    overflow: hidden;
+}
+
+.card {
+    background: white;
+    padding: 42px;
+    border-radius: 30px;
+    width: 360px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    animation: popIn 0.6s ease;
+}
+
+h1 {
+    color: #ff2f6d;
+    margin-bottom: 12px;
+}
+
+p {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.polaroid {
+    display: none;
+    background: #fff;
+    padding: 12px 12px 26px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.polaroid img {
+    width: 100%;
+    border-radius: 14px;
+}
+
+.caption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #777;
+}
+
+.buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 15px;
+    cursor: pointer;
+    background: #ff2f6d;
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: scale(1.06);
+    box-shadow: 0 8px 18px rgba(255,47,109,0.35);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.heart {
+    position: absolute;
+    font-size: 20px;
+    color: rgba(255,255,255,0.85);
+    animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: pink;
+    animation: confettiFall 3s linear forwards;
+}
+
+@keyframes confettiFall {
+    to {
+        transform: translateY(120vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Audio element - add your MP3 file -->
+<audio id="music" src="music.mp3"></audio>
+
+<div class="card">
+    <h1 id="title">Hey Cat 🐱❤️</h1>
+    <p id="text">I made something just for you…</p>
+
+    <div class="polaroid" id="polaroid" onclick="secretMessage()">
+        <img src="cat.jpg">
+        <div class="caption">My favorite Cat moment 💕</div>
+    </div>
+
+    <div class="buttons" id="buttons">
+        <button onclick="next()">Okay 🥰</button>
+    </div>
+</div>
+
+<script>
+const steps = [
+    {
+        title: "Hi Catherine 💕",
+        text: "Quick question… do you know how special you are to me?",
+        buttons: ["I think so 🥰", "Tell me 💖"]
+    },
+    {
+        title: "Just Checking 🥺",
+        text: "Do you like little things made just for you?",
+        buttons: ["Yes 🫶", "They’re my favorite 💞"]
+    },
+    {
+        title: "One More 💭",
+        text: "Would you let me spoil you this Valentine’s Day?",
+        buttons: ["Of course 😍", "Always 💘"]
+    },
+    {
+        title: "The Big Question ❤️",
+        text: "Cat… will you be my Valentine?",
+        buttons: ["YES 💖", "A thousand times yes 🥹"],
+        confetti: true
+    },
+    {
+        title: "Happy Valentine’s Day 💘",
+        text: "I’m so lucky to love you, Catherine ❤️ (tap the photo)",
+        photo: true
+    }
+];
+
+let step = 0;
+
+function next() {
+    step++;
+    render();
+}
+
+// Main rendering function
+function render() {
+    const s = steps[step];
+
+    document.getElementById("title").innerText = s.title;
+    document.getElementById("text").innerText = s.text;
+
+    const polaroid = document.getElementById("polaroid");
+    polaroid.style.display = s.photo ? "block" : "none";
+
+    const buttons = document.getElementById("buttons");
+    buttons.innerHTML = "";
+
+    if (s.buttons) {
+        s.buttons.forEach(label => {
+            const b = document.createElement("button");
+            b.innerText = label;
+            b.onclick = () => {
+                if (s.confetti) launchConfetti();
+                next();
+            };
+            buttons.appendChild(b);
+        });
+    }
+
+    // If we’re on the final screen with the photo
+    if (s.photo) {
+        startMusicFromTime(79, 103);  // From 1:19 (79s) to 1:43 (103s)
+    }
+}
+
+// Confetti function
+function launchConfetti() {
+    for (let i = 0; i < 60; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.background = ["#ff2f6d", "#ffc3da", "#ffd1e8"][Math.floor(Math.random() * 3)];
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3000);
+    }
+}
+
+// Function to play a specific time segment of audio
+function startMusicFromTime(startTime, endTime) {
+    const music = document.getElementById("music");
+    music.currentTime = startTime;
+    music.play();
+
+    // Stop the song at `endTime`
+    music.ontimeupdate = function() {
+        if (music.currentTime >= endTime) {
+            music.pause();
+            music.ontimeupdate = null; // Remove the event listener once done
+        }
+    };
+}
+
+// Secret message on photo tap
+function secretMessage() {
+    alert("How can I not love you? ❤️");
+}
+
+// Heart background animation
+function createHeart() {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.innerHTML = "❤";
+    h.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 8000);
+}
+
+// Start heart animation
+setInterval(createHeart, 350);
+</script>
+
+</body>
+</html>
